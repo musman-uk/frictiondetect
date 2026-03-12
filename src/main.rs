@@ -16,6 +16,6 @@ fn main() {
         }
     }
 
-    println!("FrictionLens scaffolding report:");
+    println!("FrictionSpot scaffolding report:");
     println!("Lines processed: {}", count);
 }
