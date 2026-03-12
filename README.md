@@ -1,6 +1,6 @@
-# FrictionSpot
+# FrictionDetect
 
-A small friction-pattern analyser for normalised logs.
+A small friction point detecter for normalised logs.
 
 This scaffolding version simply counts input lines and prints a minimal report
 to verify the CLI wiring and streaming behaviour.
