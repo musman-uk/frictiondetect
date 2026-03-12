@@ -16,6 +16,6 @@ fn main() {
         }
     }
 
-    println!("FrictionSpot scaffolding report:");
+    println!("FrictionDetect scaffolding report:");
     println!("Lines processed: {}", count);
 }
