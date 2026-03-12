@@ -7,5 +7,5 @@ fn scaffolding_counts_lines() {
     cmd.write_stdin("{\"raw\":\"hello\"}\n{\"raw\":\"world\"}\n")
         .assert()
         .success()
-        .stdout("FrictionLens scaffolding report:\nLines processed: 2\n");
+        .stdout("FrictionSpot scaffolding report:\nLines processed: 2\n");
 }
