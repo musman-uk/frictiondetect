@@ -1,4 +1,4 @@
-# FrictionLens
+# FrictionSpot
 
 A small friction-pattern analyser for normalised logs.
 
