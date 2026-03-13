@@ -1,21 +1,21 @@
-mod reader;
-mod patterns;
 mod counters;
-mod report;
 mod errors;
+mod patterns;
+mod reader;
+mod report;
 
-use std::io::{self, BufRead};
+use crate::errors::FrictionError;
 
 fn main() {
-    let stdin = io::stdin();
-    let mut count = 0;
-
-    for line in stdin.lock().lines() {
-        if line.is_ok() {
-            count += 1;
-        }
+    if let Err(e) = run() {
+        eprintln!("frictiondetect error: {}", e);
+        std::process::exit(1);
     }
+}
 
-    println!("FrictionDetect scaffolding report:");
-    println!("Lines processed: {}", count);
+fn run() -> Result<(), FrictionError> {
+    let entries = reader::read_stdin()?;
+    let summary = patterns::analyse(&entries);
+    report::print(&summary);
+    Ok(())
 }
