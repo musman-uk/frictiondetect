@@ -1,11 +1,28 @@
 use assert_cmd::Command;
+use predicates::prelude::*;
 
 #[test]
-fn scaffolding_counts_lines() {
-    let mut cmd = Command::cargo_bin("frictionspot").unwrap();
+fn report_contains_totals_and_details() {
+    let input = r#"
+{"line":1,"timestamp":"2024-03-10T12:00:01Z","level":"INFO","message":"Starting service"}
+{"line":2,"timestamp":"2024-03-10T12:00:03Z","level":"WARN","message":"Slow response from /api/orders","fields":{"duration_ms":650}}
+{"line":3,"timestamp":"2024-03-10T12:00:10Z","level":"ERROR","message":"Timeout while calling payment gateway","fields":{"duration_ms":1200}}
+{"line":4,"timestamp":"2024-03-10T12:00:30Z","level":"ERROR","message":"Payment failed"}
+{"line":5,"timestamp":"2024-03-10T12:00:32Z","level":"ERROR","message":"Timeout while calling payment gateway"}
+{"line":6,"timestamp":"2024-03-10T12:00:33Z","level":"ERROR","message":"Timeout while calling payment gateway"}
+{"line":7,"timestamp":"2024-03-10T12:05:33Z","level":"INFO","message":"Background job started"}
+{"line":8,"timestamp":"2024-03-10T12:05:34Z","level":"INFO","message":"Completed request","fields":{"duration_ms":1200}}
+{"line":9,"timestamp":"2024-03-10T12:05:35Z","level":"INFO","message":"/api/slow","fields":{"duration_ms":2000}}
+{"line":10,"timestamp":"2024-03-10T12:05:37Z","level":"ERROR","message":"Timeout while calling payment gateway"}
+"#;
 
-    cmd.write_stdin("{\"raw\":\"hello\"}\n{\"raw\":\"world\"}\n")
+    let mut cmd = Command::cargo_bin("frictiondetect").unwrap();
+    cmd.write_stdin(input)
         .assert()
         .success()
-        .stdout("FrictionSpot scaffolding report:\nLines processed: 2\n");
+        .stdout(predicate::str::contains("FrictionDetect Report"))
+        .stdout(predicate::str::contains("Total:"))
+        .stdout(predicate::str::contains("Errors:"))
+        .stdout(predicate::str::contains("Slow operations:"))
+        .stdout(predicate::str::contains("Repeated Failures:"));
 }
