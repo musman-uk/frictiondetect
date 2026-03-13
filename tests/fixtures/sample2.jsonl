@@ -1,0 +1,9 @@
+{"line":1,"timestamp":"2024-03-10T09:00:01Z","level":"INFO","message":"Start batch job"}
+{"line":2,"timestamp":"2024-03-10T09:00:02Z","level":"INFO","message":"Processing item 1","fields":{"duration_ms":800}}
+{"line":3,"timestamp":"2024-03-10T09:00:03Z","level":"INFO","message":"Processing item 2","fields":{"duration_ms":1200}}
+{"line":4,"timestamp":"2024-03-10T09:00:04Z","level":"INFO","message":"Processing item 3","fields":{"duration_ms":2000}}
+{"line":5,"timestamp":"2024-03-10T09:00:05Z","level":"ERROR","message":"Failed to process item 3"}
+{"line":6,"timestamp":"2024-03-10T09:00:06Z","level":"INFO","message":"Processing item 4","fields":{"duration_ms":700}}
+{"line":7,"timestamp":"2024-03-10T09:00:07Z","level":"INFO","message":"Processing item 5","fields":{"duration_ms":300}}
+{"line":8,"timestamp":"2024-03-10T09:00:08Z","level":"WARN","message":"Slow DB query","fields":{"duration_ms":900}}
+{"line":9,"timestamp":"2024-03-10T09:00:09Z","level":"INFO","message":"Batch complete"}
