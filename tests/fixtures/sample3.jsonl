@@ -1,0 +1,10 @@
+{"line":1,"timestamp":"2024-03-10T14:00:01Z","level":"INFO","message":"Worker started"}
+{"line":2,"timestamp":"2024-03-10T14:00:02Z","level":"WARN","message":"Queue delay high"}
+{"line":3,"timestamp":"2024-03-10T14:00:03Z","level":"WARN","message":"Queue delay high"}
+{"line":4,"timestamp":"2024-03-10T14:00:04Z","level":"WARN","message":"Queue delay high"}
+{"line":5,"timestamp":"2024-03-10T14:00:05Z","level":"ERROR","message":"Failed to fetch job"}
+{"line":6,"timestamp":"2024-03-10T14:00:06Z","level":"ERROR","message":"Failed to fetch job"}
+{"line":7,"timestamp":"2024-03-10T14:00:07Z","level":"INFO","message":"Retrying"}
+{"line":8,"timestamp":"2024-03-10T14:00:08Z","level":"INFO","message":"Job fetched","fields":{"duration_ms":700}}
+{"line":9,"timestamp":"2024-03-10T14:00:09Z","level":"INFO","message":"Job processed","fields":{"duration_ms":900}}
+{"line":10,"timestamp":"2024-03-10T14:00:10Z","level":"INFO","message":"Worker idle"}
