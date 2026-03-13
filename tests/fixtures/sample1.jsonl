@@ -1,0 +1,10 @@
+{"line":1,"timestamp":"2024-03-10T12:00:01Z","level":"INFO","message":"Starting service"}
+{"line":2,"timestamp":"2024-03-10T12:00:03Z","level":"WARN","message":"Slow response from /api/orders","fields":{"duration_ms":650}}
+{"line":3,"timestamp":"2024-03-10T12:00:10Z","level":"ERROR","message":"Timeout while calling payment gateway","fields":{"duration_ms":1200}}
+{"line":4,"timestamp":"2024-03-10T12:00:30Z","level":"ERROR","message":"Payment failed"}
+{"line":5,"timestamp":"2024-03-10T12:00:32Z","level":"ERROR","message":"Timeout while calling payment gateway"}
+{"line":6,"timestamp":"2024-03-10T12:00:33Z","level":"ERROR","message":"Timeout while calling payment gateway"}
+{"line":7,"timestamp":"2024-03-10T12:05:33Z","level":"INFO","message":"Background job started"}
+{"line":8,"timestamp":"2024-03-10T12:05:34Z","level":"INFO","message":"Completed request","fields":{"duration_ms":1200}}
+{"line":9,"timestamp":"2024-03-10T12:05:35Z","level":"INFO","message":"/api/slow","fields":{"duration_ms":2000}}
+{"line":10,"timestamp":"2024-03-10T12:05:37Z","level":"ERROR","message":"Timeout while calling payment gateway"}
