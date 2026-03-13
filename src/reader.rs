@@ -15,8 +15,6 @@ pub struct Entry {
     pub message: Option<String>,
     #[serde(default)]
     pub fields: Option<Map<String, Value>>,
-    #[serde(default)]
-    pub raw: Option<String>,
 }
 
 impl Entry {
