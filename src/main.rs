@@ -132,15 +132,16 @@ fn print_sample() {
     println!("sample");
     println!("------------------------------------------------");
     println!("Example input (JSONL):");
-    println!(r#"  {"line":1,"timestamp":"2024-01-01T12:00:00Z","level":"INFO","message":"Start","fields":{}}"#);
-    println!(r#"  {"line":2,"timestamp":"2024-01-01T12:00:01Z","level":"ERROR","message":"Failed","fields":{"duration_ms":800}}"#);
-    println!(r#"  {"line":3,"timestamp":"2024-01-01T12:00:02Z","level":"INFO","message":"Retry","fields":{}}"#);
+
+    println!(r#"  {{ "line": 1, "timestamp": "2024-01-01T12:00:00Z", "level": "INFO", "message": "Start", "fields": {{}} }}"#);
+    println!(r#"  {{ "line": 2, "timestamp": "2024-01-01T12:00:01Z", "level": "ERROR", "message": "Failed", "fields": {{ "duration_ms": 800 }} }}"#);
+    println!(r#"  {{ "line": 3, "timestamp": "2024-01-01T12:00:02Z", "level": "INFO", "message": "Retry", "fields": {{}} }}"#);
 
     println!("\nRun:");
     println!("  frictiondetect analyse --file sample.jsonl");
 }
 
-/// Condensed documentation (LogTidy‑style)
+/// Condensed documentation 
 fn print_docs() {
     println!("docs");
     println!("------------------------------------------------");
