@@ -3,8 +3,8 @@ name = "frictiondetect"
 version = "0.1.0"
 edition = "2021"
 authors = ["Mohammed Usman"]
-license = "Proprietary"
-description = "A CLI tool that shows friction points in structured logs."
+license-file = "LICENSE"
+description = "A CLI tool that identifies friction points in structured JSONL logs."
 repository = "https://github.com/musman-uk/frictiondetect"
 
 [dependencies]
@@ -12,6 +12,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 chrono = { version = "0.4", features = ["serde"] }
 thiserror = "1"
+clap = { version = "4", features = ["derive"] }
 
 [dev-dependencies]
 assert_cmd = "2"
