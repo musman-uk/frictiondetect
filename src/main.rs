@@ -122,9 +122,6 @@ fn print_main_menu() {
     println!("  about      Show tool information");
     println!("  license    Show license information");
     println!("  help       Show help\n");
-
-    println!("Full documentation:");
-    println!("  https://github.com/musman-uk/frictiondetect/blob/main/Documentation.md");
 }
 
 /// Example usage and sample JSONL
