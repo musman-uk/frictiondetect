@@ -211,7 +211,6 @@ Validate your JSONL input.
 
 ## 9. Summary
 
-FrictionDetect is a focused analysis tool for structured JSONL logs.  
-It highlights operational friction using explicit fields only, without inference or heuristics.  
-Its behaviour is deterministic, minimal, and designed to integrate cleanly with LogTidy and CLI pipelines.
+FrictionDetect is a focused analysis tool for structured JSONL logs and highlights operational friction using explicit fields only, 
+without inference or heuristics. Its behaviour is deterministic, minimal, and designed to integrate cleanly with real pipelines.
 
