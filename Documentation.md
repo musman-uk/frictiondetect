@@ -23,13 +23,46 @@ FrictionDetect provides one primary mode:
 
 ## 2. Installation
 
-Build release binaries:
+FrictionDetect can be installed in three ways: downloading a binary from GitHub Releases, installing from crates.io, or building from source using Cargo.
+
+### Install from GitHub Releases
+
+Download the latest binary for your platform from the Releases page:
+
+https://github.com/musman-uk/frictiondetect/releases
+
+Make it executable if needed, then place it somewhere on your PATH. For example on Linux or macOS:
+
+```
+chmod +x frictiondetect
+mv frictiondetect ~/.cargo/bin/
+```
+
+Verify installation:
+
+```
+frictiondetect help
+```
+
+### Install from crates.io
+
+If you have Rust and Cargo installed, you can install FrictionDetect directly from crates.io:
+
+```
+cargo install frictiondetect
+```
+
+This compiles the tool from source and places the binary in `~/.cargo/bin`.
+
+### Build from source with Cargo
+
+If you prefer to build the tool yourself, run:
 
 ```
 cargo build --release
 ```
 
-Install them somewhere on your PATH:
+Then place the binary on your PATH:
 
 ```
 cp target/release/frictiondetect ~/.cargo/bin/
@@ -48,6 +81,7 @@ cat logs.jsonl | frictiondetect analyse
 ```
 
 This reads structured JSONL input and prints a friction report.
+
 
 ---
 
