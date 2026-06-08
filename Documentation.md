@@ -183,7 +183,7 @@ FrictionDetect applies strict, explicit rules.
 - No correlation analysis  
 - No JSON output mode (stdout only)  
 - Missing fields are silently ignored  
-- Fully dependent on LogTidy strictness for timestamps, levels, and durations  
+
 
 ---
 
