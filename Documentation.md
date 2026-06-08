@@ -10,14 +10,14 @@ FrictionDetect analyses **structured JSONL logs** and identifies operational fri
 - repeated failures  
 
 It is intentionally strict, predictable, and designed to compose cleanly with tools like LogTidy.  
-FrictionDetect does **not** analyse unstructured logs or infer meaning from free‑text messages.  
+FrictionDetect does **not** analyse unstructured logs or infer meaning from free text messages.  
 It relies entirely on explicit structured fields such as `timestamp`, `level`, and `duration_ms`.
 
 If these fields are missing or invalid, the corresponding friction categories cannot be detected.
 
 FrictionDetect provides one primary mode:
 
-- **Analyse** — read structured JSONL from file or stdin and emit a friction summary
+- **Analyse**: read structured JSONL from file or stdin and emit a friction summary
 
 ---
 
@@ -85,7 +85,7 @@ Analyse mode identifies:
 - explicit `"ERROR"` and `"WARN"` events  
 - operations exceeding 500ms  
 - timestamp gaps exceeding 60 seconds  
-- repeated identical messages (2+ occurrences)  
+- repeated identical messages (2 or more occurrences)  
 
 ---
 
@@ -116,11 +116,11 @@ A single malformed line aborts the entire run.
 
 Typical fields:
 
-- `timestamp` — RFC3339 timestamp  
-- `level` — `"INFO"`, `"WARN"`, `"ERROR"`  
-- `message` — log message  
-- `fields` — structured metadata  
-- `duration_ms` — optional numeric duration  
+- `timestamp`: RFC3339 timestamp  
+- `level`: `"INFO"`, `"WARN"`, `"ERROR"`  
+- `message`: log message  
+- `fields`: structured metadata  
+- `duration_ms`: optional numeric duration  
 
 Example:
 
@@ -134,10 +134,10 @@ Example:
 
 ## 6. Behaviour
 
-FrictionDetect applies strict, explicit rules:
+FrictionDetect applies strict, explicit rules.
 
 ### 6.1 JSON Parsing
-- Every non‑empty line must be valid JSON.  
+- Every non empty line must be valid JSON.  
 - One malformed line aborts the entire analysis.  
 - Empty lines are skipped.
 
@@ -148,18 +148,18 @@ FrictionDetect applies strict, explicit rules:
 
 ### 6.3 Slow Operation Detection
 - Uses `fields.duration_ms` if present and numeric.  
-- Slow operations are those **> 500ms** (hardcoded).  
+- Slow operations are those greater than 500ms (hardcoded).  
 - No inference from message text.
 
 ### 6.4 Long Gap Detection
 - Requires a valid RFC3339 timestamp.  
-- Gaps **> 60 seconds** are reported (hardcoded).  
+- Gaps greater than 60 seconds are reported (hardcoded).  
 - Invalid or missing timestamps disable gap detection for that entry.
 
 ### 6.5 Repeated Failure Detection
 - Messages are grouped by **exact string match**.  
-- Case‑sensitive, whitespace‑sensitive, punctuation‑sensitive.  
-- Minimum occurrences: **2** (hardcoded).  
+- Case sensitive, whitespace sensitive, punctuation sensitive.  
+- Minimum occurrences: 2 (hardcoded).  
 - No fuzzy matching or normalisation.
 
 ### 6.6 Execution Model
@@ -179,18 +179,18 @@ FrictionDetect applies strict, explicit rules:
 - Only RFC3339 timestamps are supported  
 - Thresholds are hardcoded (500ms slow ops, 60s gaps, 2 occurrences)  
 - No fuzzy matching for repeated failures  
-- No semantic grouping (no retry/backoff detection)  
+- No semantic grouping (no retry or backoff detection)  
 - No correlation analysis  
 - No JSON output mode (stdout only)  
 - Missing fields are silently ignored  
-- Fully dependent on LogTidy’s strictness for timestamps, levels, and durations  
+- Fully dependent on LogTidy strictness for timestamps, levels, and durations  
 
 ---
 
 ## 8. Troubleshooting
 
 ### Command not found
-Ensure Cargo’s bin directory is on your PATH:
+Ensure Cargo bin directory is on your PATH:
 
 ```
 ~/.cargo/bin
@@ -211,6 +211,4 @@ Validate your JSONL input.
 
 ## 9. Summary
 
-FrictionDetect is a focused analysis tool for structured JSONL logs and highlights operational friction using explicit fields only, 
-without inference or heuristics. Its behaviour is deterministic, minimal, and designed to integrate cleanly with real pipelines.
-
+FrictionDetect is a focused analysis tool for structured JSONL logs and highlights operational friction using explicit fields only, without inference or heuristics. Its behaviour is deterministic, minimal, and designed to integrate cleanly with real pipelines.
