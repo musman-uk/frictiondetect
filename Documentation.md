@@ -1,33 +1,46 @@
-# Documentation
+# FrictionDetect Documentation
 
 ## 1. Overview
 
-FrictionDetect analyses structured JSONL logs and identifies friction patterns such as slow operations, long gaps, repeated failures, and error clusters. It is designed for predictable CLI behaviour, simple composition with other tools, and clean integration into pipelines. This document provides full usage guidance, examples, and troubleshooting notes.
+FrictionDetect analyses structured JSONL logs and identifies friction patterns such as slow operations, long gaps, repeated failures, and error clusters. It is designed for predictable CLI behaviour, clean composition with other tools, and reliable integration into pipelines. The tool focuses on taking structured log events and producing a clear, readable friction report.
+
+### What FrictionDetect does not do
+
+To keep FrictionDetect focused, it intentionally does **not**:
+
+- analyse unstructured text logs  
+- infer log levels from message content  
+- scan for keywords such as “error”, “failed”, or “timeout”  
+- guess timestamps or durations when fields are missing  
+- interpret meaning from free‑text messages  
+- classify friction based on wording alone  
+- operate without structured JSONL input  
+
+FrictionDetect relies on explicit fields such as `timestamp`, `level`, and `duration_ms`.  
+If these fields are missing, the corresponding friction categories cannot be detected.
 
 FrictionDetect provides a single primary mode of operation:
 
-- **Analyse mode** — processes structured JSONL logs (from file or stdin)
-
-The tool emits a human‑readable friction report summarising issues detected in the log stream.
+- Analyse mode, process structured JSONL logs from file or stdin
 
 Two binaries are available:
 
-- `frictiondetect` — full command name  
-- `fd` — short alias for daily use  
+- `frictiondetect`, full command  
+- `fd`, short alias  
 
-Both map to the same executable logic.
+Both behave the same.
 
 ---
 
 ## 2. Installation
 
-Build the release binaries:
+Build release binaries:
 
 ```
 cargo build --release
 ```
 
-Install them into a directory on your `PATH` (for example, Cargo’s bin directory):
+Install them somewhere on your PATH:
 
 ```
 cp target/release/frictiondetect ~/.cargo/bin/
@@ -37,9 +50,25 @@ cp target/release/fd ~/.cargo/bin/
 Verify installation:
 
 ```
-frictiondetect
-fd
+frictiondetect help
+fd help
 ```
+
+### Quick Start
+
+To run a quick analysis on a JSONL log file:
+
+```
+cat logs.jsonl | frictiondetect analyse
+```
+
+Or on PowerShell:
+
+```
+Get-Content logs.jsonl | frictiondetect analyse
+```
+
+This reads structured JSONL input and emits a friction report.
 
 ---
 
@@ -50,9 +79,9 @@ FrictionDetect exposes a minimal, intentional command surface:
 | Command       | Description |
 |---------------|-------------|
 | `analyse`     | Analyse structured JSONL logs and produce a friction report |
-| `sample`      | Display example input and output |
-| `docs`        | Show documentation reference |
-| `about`       | Display tool information |
+| `sample`      | Show example input and output |
+| `docs`        | Display documentation reference |
+| `about`       | Show tool information |
 | `license`     | Display authorship and rights information |
 | `help`        | Show help for any command |
 
@@ -60,17 +89,17 @@ FrictionDetect exposes a minimal, intentional command surface:
 
 ## 4. Usage
 
-### 4.1. Analyse Mode
+### 4.1 Analyse Mode
 
 Analyse mode processes structured JSONL logs and identifies friction patterns.
 
-Example (file input):
+Example using a file:
 
 ```
 frictiondetect analyse --file logs.jsonl
 ```
 
-Example (stdin):
+Example using stdin:
 
 ```
 cat logs.jsonl | frictiondetect analyse
@@ -82,14 +111,16 @@ Short form:
 cat logs.jsonl | fd analyse
 ```
 
-Analyse mode is ideal for:
+Analyse mode is useful for:
 
 - reviewing application behaviour  
 - identifying slow or problematic operations  
 - detecting repeated failures  
 - summarising log health for debugging or reporting  
 
-### 4.2. Sample Output
+---
+
+### 4.2 Sample Output
 
 To view example input and output:
 
@@ -99,9 +130,11 @@ frictiondetect sample
 
 This is useful for verifying installation or understanding the expected input format.
 
-### 4.3. Documentation and About
+---
 
-Show documentation reference:
+### 4.3 Documentation and About
+
+Show documentation:
 
 ```
 frictiondetect docs
@@ -117,15 +150,15 @@ frictiondetect about
 
 ## 5. Input Format
 
-FrictionDetect consumes **JSON Lines (JSONL)**, where each line is a valid JSON object.
+FrictionDetect consumes JSON Lines (JSONL), where each line is a valid JSON object.
 
 Typical fields include:
 
-- `timestamp` — ISO‑8601 timestamp  
-- `level` — log level (INFO, WARN, ERROR, etc.)  
-- `message` — log message  
-- `fields` — additional structured metadata  
-- `duration_ms` — operation duration (optional)  
+- `timestamp`, ISO 8601 timestamp  
+- `level`, log level such as INFO, WARN, ERROR  
+- `message`, log message  
+- `fields`, additional structured metadata  
+- `duration_ms`, optional duration field  
 
 Example:
 
@@ -139,7 +172,7 @@ Example:
 
 ## 6. Output Format
 
-FrictionDetect emits a human‑readable friction report summarising:
+FrictionDetect emits a human readable friction report summarising:
 
 - errors and warnings  
 - slow operations  
@@ -151,29 +184,31 @@ The report is deterministic and stable across runs.
 
 ---
 
-## 7. Development Notes
+## 7. Platform Notes
 
-FrictionDetect is implemented in Rust using:
+### Windows PowerShell
 
-- **Clap** for CLI parsing  
-- **Serde** for JSON parsing  
-- **Chrono** for timestamp handling  
-- **ThisError** for error definitions  
+Use Get-Content for consistent streaming:
 
-Integration tests use:
+```
+Get-Content logs.jsonl | frictiondetect analyse
+```
 
-- `assert_cmd`  
-- `predicates`  
+### Linux and macOS
 
-Fixtures live under `tests/fixtures/`.
+Standard piping works as expected:
+
+```
+cat logs.jsonl | frictiondetect analyse
+```
 
 ---
 
 ## 8. Troubleshooting
 
-### 8.1. FrictionDetect is not recognised as a command
+### FrictionDetect is not recognised as a command
 
-Ensure Cargo’s bin directory is on your `PATH`:
+Ensure Cargo’s bin directory is on your PATH:
 
 ```
 ~/.cargo/bin
@@ -181,19 +216,19 @@ Ensure Cargo’s bin directory is on your `PATH`:
 
 Restart your terminal after installation.
 
-### 8.2. No output appears
+### No output appears
 
-Confirm that input is being piped correctly:
+Test with a simple inline example:
 
 ```
-cat logs.jsonl | frictiondetect analyse
+{"timestamp":"2024-01-01T12:00:00Z","level":"INFO","message":"Test"} | frictiondetect analyse
 ```
 
 If this works, the issue is with the upstream command.
 
-### 8.3. File not found
+### File not found
 
-Ensure the path is correct and quoted if it contains spaces:
+Quote paths that contain spaces:
 
 ```
 frictiondetect analyse --file "C:/logs/app logs.jsonl"
@@ -201,7 +236,6 @@ frictiondetect analyse --file "C:/logs/app logs.jsonl"
 
 ---
 
-## 9. Versioning
+## 9. Summary
 
-Current version: `0.1.0` — In Development
-
+FrictionDetect is a focused analysis tool. It reads structured JSONL logs and produces a clear friction report that highlights operational issues without interpreting meaning beyond the data provided. It is predictable, pipeline friendly, and designed to integrate cleanly with tools like LogTidy. It aims to provide insights that are both clear and useful within real workflows and pipelines.
