@@ -1,32 +1,23 @@
-# FrictionDetect Documentation
+# Documentation
 
 ## 1. Overview
 
-FrictionDetect analyses structured JSONL logs and identifies friction patterns such as slow operations, long gaps, repeated failures, and error clusters. It is designed for predictable CLI behaviour, clean composition with other tools, and reliable integration into pipelines. The tool focuses on taking structured log events and producing a clear, readable friction report.
+FrictionDetect analyses **structured JSONL logs** and identifies operational friction patterns such as:
 
-To keep FrictionDetect focused, it intentionally does **not**:
+- errors and warnings  
+- slow operations  
+- long gaps between events  
+- repeated failures  
 
-- analyse unstructured text logs  
-- infer log levels from message content  
-- scan for keywords such as “error”, “failed”, or “timeout”  
-- guess timestamps or durations when fields are missing  
-- interpret meaning from free‑text messages  
-- classify friction based on wording alone  
-- operate without structured JSONL input  
+It is intentionally strict, predictable, and designed to compose cleanly with tools like LogTidy.  
+FrictionDetect does **not** analyse unstructured logs or infer meaning from free‑text messages.  
+It relies entirely on explicit structured fields such as `timestamp`, `level`, and `duration_ms`.
 
-FrictionDetect relies on explicit fields such as `timestamp`, `level`, and `duration_ms`.  
-If these fields are missing, the corresponding friction categories cannot be detected.
+If these fields are missing or invalid, the corresponding friction categories cannot be detected.
 
-FrictionDetect provides a single primary mode of operation:
+FrictionDetect provides one primary mode:
 
-- Analyse mode, process structured JSONL logs from file or stdin
-
-Two binaries are available:
-
-- `frictiondetect`, full command  
-- `fd`, short alias  
-
-Both behave the same.
+- **Analyse** — read structured JSONL from file or stdin and emit a friction summary
 
 ---
 
@@ -42,43 +33,31 @@ Install them somewhere on your PATH:
 
 ```
 cp target/release/frictiondetect ~/.cargo/bin/
-cp target/release/fd ~/.cargo/bin/
 ```
 
 Verify installation:
 
 ```
 frictiondetect help
-fd help
 ```
 
 ### Quick Start
-
-To run a quick analysis on a JSONL log file:
 
 ```
 cat logs.jsonl | frictiondetect analyse
 ```
 
-Or on PowerShell:
-
-```
-Get-Content logs.jsonl | frictiondetect analyse
-```
-
-This reads structured JSONL input and emits a friction report.
+This reads structured JSONL input and prints a friction report.
 
 ---
 
 ## 3. Commands
 
-FrictionDetect exposes a minimal, intentional command surface:
-
 | Command       | Description |
 |---------------|-------------|
 | `analyse`     | Analyse structured JSONL logs and produce a friction report |
 | `sample`      | Show example input and output |
-| `docs`        | Display documentation reference |
+| `docs`        | Display condensed documentation |
 | `about`       | Show tool information |
 | `license`     | Display authorship and rights information |
 | `help`        | Show help for any command |
@@ -89,58 +68,41 @@ FrictionDetect exposes a minimal, intentional command surface:
 
 ### 4.1 Analyse Mode
 
-Analyse mode processes structured JSONL logs and identifies friction patterns.
-
-Example using a file:
+Analyse structured JSONL logs:
 
 ```
 frictiondetect analyse --file logs.jsonl
 ```
 
-Example using stdin:
+Or via stdin:
 
 ```
 cat logs.jsonl | frictiondetect analyse
 ```
 
-Short form:
+Analyse mode identifies:
 
-```
-cat logs.jsonl | fd analyse
-```
-
-Analyse mode is useful for:
-
-- reviewing application behaviour  
-- identifying slow or problematic operations  
-- detecting repeated failures  
-- summarising log health for debugging or reporting  
+- explicit `"ERROR"` and `"WARN"` events  
+- operations exceeding 500ms  
+- timestamp gaps exceeding 60 seconds  
+- repeated identical messages (2+ occurrences)  
 
 ---
 
 ### 4.2 Sample Output
 
-To view example input and output:
-
 ```
 frictiondetect sample
 ```
 
-This is useful for verifying installation or understanding the expected input format.
+Shows example input and output for reference.
 
 ---
 
 ### 4.3 Documentation and About
 
-Show documentation:
-
 ```
 frictiondetect docs
-```
-
-Show tool information:
-
-```
 frictiondetect about
 ```
 
@@ -148,15 +110,17 @@ frictiondetect about
 
 ## 5. Input Format
 
-FrictionDetect consumes JSON Lines (JSONL), where each line is a valid JSON object.
+FrictionDetect consumes **JSON Lines (JSONL)**.  
+Each line must be a **valid JSON object**.  
+A single malformed line aborts the entire run.
 
-Typical fields include:
+Typical fields:
 
-- `timestamp`, ISO 8601 timestamp  
-- `level`, log level such as INFO, WARN, ERROR  
-- `message`, log message  
-- `fields`, additional structured metadata  
-- `duration_ms`, optional duration field  
+- `timestamp` — RFC3339 timestamp  
+- `level` — `"INFO"`, `"WARN"`, `"ERROR"`  
+- `message` — log message  
+- `fields` — structured metadata  
+- `duration_ms` — optional numeric duration  
 
 Example:
 
@@ -168,72 +132,86 @@ Example:
 
 ---
 
-## 6. Output Format
+## 6. Behaviour
 
-FrictionDetect emits a human readable friction report summarising:
+FrictionDetect applies strict, explicit rules:
 
-- errors and warnings  
-- slow operations  
-- long gaps between events  
-- repeated failures  
-- counts and aggregates  
+### 6.1 JSON Parsing
+- Every non‑empty line must be valid JSON.  
+- One malformed line aborts the entire analysis.  
+- Empty lines are skipped.
 
-The report is deterministic and stable across runs.
+### 6.2 Level Detection
+- Only `"ERROR"` and `"WARN"` (uppercase) are recognised.  
+- `"error"`, `"Error"`, `"warning"` are ignored.  
+- If `level` is missing, the event is not classified.
+
+### 6.3 Slow Operation Detection
+- Uses `fields.duration_ms` if present and numeric.  
+- Slow operations are those **> 500ms** (hardcoded).  
+- No inference from message text.
+
+### 6.4 Long Gap Detection
+- Requires a valid RFC3339 timestamp.  
+- Gaps **> 60 seconds** are reported (hardcoded).  
+- Invalid or missing timestamps disable gap detection for that entry.
+
+### 6.5 Repeated Failure Detection
+- Messages are grouped by **exact string match**.  
+- Case‑sensitive, whitespace‑sensitive, punctuation‑sensitive.  
+- Minimum occurrences: **2** (hardcoded).  
+- No fuzzy matching or normalisation.
+
+### 6.6 Execution Model
+- Entire log is loaded into memory.  
+- No streaming mode.  
+- No partial recovery.  
+- Deterministic output.
 
 ---
 
-## 7. Platform Notes
+## 7. Known Limitations
 
-### Windows PowerShell
-
-Use Get-Content for consistent streaming:
-
-```
-Get-Content logs.jsonl | frictiondetect analyse
-```
-
-### Linux and macOS
-
-Standard piping works as expected:
-
-```
-cat logs.jsonl | frictiondetect analyse
-```
+- Requires structured JSONL; raw logs are not supported  
+- One malformed JSON line aborts the run  
+- No streaming mode (entire file loaded into memory)  
+- Only uppercase `"ERROR"` and `"WARN"` are detected  
+- Only RFC3339 timestamps are supported  
+- Thresholds are hardcoded (500ms slow ops, 60s gaps, 2 occurrences)  
+- No fuzzy matching for repeated failures  
+- No semantic grouping (no retry/backoff detection)  
+- No correlation analysis  
+- No JSON output mode (stdout only)  
+- Missing fields are silently ignored  
+- Fully dependent on LogTidy’s strictness for timestamps, levels, and durations  
 
 ---
 
 ## 8. Troubleshooting
 
-### FrictionDetect is not recognised as a command
-
+### Command not found
 Ensure Cargo’s bin directory is on your PATH:
 
 ```
 ~/.cargo/bin
 ```
 
-Restart your terminal after installation.
+### No friction detected
+Check that your logs include:
 
-### No output appears
+- valid RFC3339 timestamps  
+- uppercase `"ERROR"` or `"WARN"`  
+- numeric `duration_ms` fields  
 
-Test with a simple inline example:
-
-```
-{"timestamp":"2024-01-01T12:00:00Z","level":"INFO","message":"Test"} | frictiondetect analyse
-```
-
-If this works, the issue is with the upstream command.
-
-### File not found
-
-Quote paths that contain spaces:
-
-```
-frictiondetect analyse --file "C:/logs/app logs.jsonl"
-```
+### JSON parse error
+A single malformed line will abort the run.  
+Validate your JSONL input.
 
 ---
 
 ## 9. Summary
 
-FrictionDetect is a focused analysis tool. It reads structured JSONL logs and produces a clear friction report that highlights operational issues without interpreting meaning beyond the data provided. It is predictable, pipeline friendly, and designed to integrate cleanly with tools like LogTidy. It aims to provide insights that are both clear and useful within real workflows and pipelines.
+FrictionDetect is a focused analysis tool for structured JSONL logs.  
+It highlights operational friction using explicit fields only, without inference or heuristics.  
+Its behaviour is deterministic, minimal, and designed to integrate cleanly with LogTidy and CLI pipelines.
+
