@@ -4,8 +4,6 @@
 
 FrictionDetect analyses structured JSONL logs and identifies friction patterns such as slow operations, long gaps, repeated failures, and error clusters. It is designed for predictable CLI behaviour, clean composition with other tools, and reliable integration into pipelines. The tool focuses on taking structured log events and producing a clear, readable friction report.
 
-### What FrictionDetect does not do
-
 To keep FrictionDetect focused, it intentionally does **not**:
 
 - analyse unstructured text logs  
