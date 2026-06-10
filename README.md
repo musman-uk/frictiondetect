@@ -1,4 +1,4 @@
-# FrictionDetect
+# 🧨 FrictionDetect
 
 This repository contains [FrictionDetect](https://github.com/musman-uk/frictiondetect/releases/tag/v0.1.0) - an analysis tool that identifies friction points in structured JSONL logs. It is designed for predictable CLI behaviour, simple composition with other tools, and clean integration into pipelines.
 
