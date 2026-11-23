@@ -78,7 +78,7 @@
 
 ## 4. Version History
 
-### v0.1.0 – In Development
+### v0.1.0 – Published
 - Implemented friction analysis pipeline (errors, slow ops, gaps, repeats)  
 - Added example and documentation commands  
 - Introduced identity commands (`about`, `license`)  
