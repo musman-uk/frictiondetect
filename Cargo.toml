@@ -1,11 +1,12 @@
 [package]
 name = "frictiondetect"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Mohammed Usman"]
-license-file = "LICENSE"
 description = "A CLI tool that identifies friction points in structured JSONL logs."
 repository = "https://github.com/musman-uk/frictiondetect"
+license = "GPL-3.0-only"
+default-run = "frictiondetect"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }

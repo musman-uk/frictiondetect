@@ -48,9 +48,6 @@ enum Commands {
 
     /// Show tool information
     About,
-
-    /// Show license information
-    License,
 }
 
 fn main() -> Result<(), FrictionError> {
@@ -77,10 +74,6 @@ fn main() -> Result<(), FrictionError> {
 
         Some(Commands::About) => {
             print_about();
-        }
-
-        Some(Commands::License) => {
-            print_license();
         }
 
         None => {
@@ -120,7 +113,6 @@ fn print_main_menu() {
     println!("  sample     Show example input/output");
     println!("  docs       Show condensed documentation");
     println!("  about      Show tool information");
-    println!("  license    Show license information");
     println!("  help       Show help\n");
 }
 
@@ -138,7 +130,7 @@ fn print_sample() {
     println!("  frictiondetect analyse --file sample.jsonl");
 }
 
-/// Condensed documentation 
+/// Condensed documentation
 fn print_docs() {
     println!("docs");
     println!("------------------------------------------------");
@@ -173,13 +165,8 @@ fn print_about() {
     println!("------------------------------------------------");
     println!("Name: FrictionDetect");
     println!("Version: {}", env!("CARGO_PKG_VERSION"));
+    println!("License: {}", env!("CARGO_PKG_LICENSE"));
     println!("Source: https://github.com/musman-uk/frictiondetect");
-}
-
-/// License information
-fn print_license() {
-    println!("license");
-    println!("------------------------------------------------");
-    println!("© Mohammed Usman\n");
-    println!("All rights reserved. No commercial use, redistribution, or derivatives.");
+    println!();
+    println!("© Mohammed Usman");
 }

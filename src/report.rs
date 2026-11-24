@@ -5,6 +5,7 @@ pub fn print(summary: &FrictionSummary) {
     println!("=====================\n");
 
     println!("Total:");
+    println!("  Lines analysed: {}", summary.total_lines);
     println!("  Errors: {}", summary.errors.len());
     println!("  Warnings: {}", summary.warnings.len());
     println!("  Slow operations: {}", summary.slow_ops.len());
@@ -12,7 +13,7 @@ pub fn print(summary: &FrictionSummary) {
     println!("  Repeated failures: {}", summary.repeated_failures.len());
     println!();
 
-    println!("Further Detail:");
+    println!("Further Details:");
     println!("---------------\n");
 
     print_errors(summary);
@@ -56,21 +57,9 @@ fn print_slow_ops(summary: &FrictionSummary) {
     }
     for s in &summary.slow_ops {
         let ts = s.timestamp.as_deref().unwrap_or("-");
-        // detail is "<ms> ms"
-        println!("  [line {}]   [{}]   {}   {}", s.line, s.detail, ts, slow_message_for_line(s.line, summary));
+        println!("  [line {}]   [{} ms]   {}   {}", s.line, s.duration_ms, ts, s.message);
     }
     println!();
-}
-
-fn slow_message_for_line(line: usize, summary: &FrictionSummary) -> String {
-    // Best-effort: find an error/warn/info message with same line in errors/warnings
-    if let Some(e) = summary.errors.iter().find(|e| e.line == line) {
-        return e.detail.clone();
-    }
-    if let Some(w) = summary.warnings.iter().find(|w| w.line == line) {
-        return w.detail.clone();
-    }
-    String::new()
 }
 
 fn print_long_gaps(summary: &FrictionSummary) {

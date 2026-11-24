@@ -17,7 +17,8 @@ fn report_contains_totals_and_details() {
 "#;
 
     let mut cmd = Command::cargo_bin("frictiondetect").unwrap();
-    cmd.write_stdin(input)
+    cmd.arg("analyse")
+        .write_stdin(input)
         .assert()
         .success()
         .stdout(predicate::str::contains("FrictionDetect Report"))

@@ -14,6 +14,14 @@ pub struct FrictionPoint {
 }
 
 #[derive(Debug)]
+pub struct SlowOp {
+    pub line: usize,
+    pub timestamp: Option<String>,
+    pub duration_ms: i64,
+    pub message: String,
+}
+
+#[derive(Debug)]
 pub struct LongGap {
     pub from_line: usize,
     pub to_line: usize,
@@ -34,14 +42,16 @@ pub struct FrictionSummary {
 
     pub errors: Vec<FrictionPoint>,
     pub warnings: Vec<FrictionPoint>,
-    pub slow_ops: Vec<FrictionPoint>,
+    pub slow_ops: Vec<SlowOp>,
     pub long_gaps: Vec<LongGap>,
     pub repeated_failures: Vec<RepeatedFailureGroup>,
 }
 
 pub fn analyse(entries: &[Entry]) -> FrictionSummary {
-    let mut summary = FrictionSummary::default();
-    summary.total_lines = entries.len();
+    let mut summary = FrictionSummary {
+        total_lines: entries.len(),
+        ..Default::default()
+    };
 
     let mut prev_ts: Option<(DateTime<Utc>, usize)> = None;
     let mut msg_counts = MessageCounts::default();
@@ -65,10 +75,11 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
         // Slow operations
         if let Some(ms) = e.duration_ms() {
             if ms > SLOW_THRESHOLD_MS {
-                summary.slow_ops.push(FrictionPoint {
+                summary.slow_ops.push(SlowOp {
                     line: e.line,
                     timestamp: e.timestamp.clone(),
-                    detail: format!("{} ms", ms),
+                    duration_ms: ms,
+                    message: e.message.clone().unwrap_or_default(),
                 });
             }
         }
@@ -97,7 +108,7 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
             prev_ts = Some((ts, e.line));
         }
 
-        // Repeated failures (count messages)
+        // Repeated messages
         msg_counts.add(e);
     }
 
