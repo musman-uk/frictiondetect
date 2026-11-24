@@ -34,8 +34,7 @@
 - `analyse` – processes structured JSONL logs and produces a friction summary  
 - `sample` – provides minimal example input and output  
 - `docs` – summarises usage, inputs, outputs, and examples  
-- `about` – displays tool name, version, and repository source  
-- `license` – displays authorship and rights information  
+- `about` – displays tool name, version, license, repository source, and copyright  
 
 ### Source Layout
 | File / Module       | Purpose |
@@ -49,7 +48,7 @@
 
 ### Versioning
 - Version sourced from `Cargo.toml` via `env!("CARGO_PKG_VERSION")`  
-- Current stage: **v0.1.0 (draft / pre‑release)**  
+- Current stage: **v0.1.1**  
 - Versioning will stabilise once friction rules and thresholds mature  
 
 ---
@@ -78,11 +77,18 @@
 
 ## 4. Version History
 
-### v0.1.0 – Published
+### v0.1.1 – Current
+- Relicensed under GNU General Public License v3.0 (`GPL-3.0-only`)
+- Consolidated tool metadata, license, and copyright notice into `about`
+- Allowed standalone JSONL input without requiring an explicit `line` field
+- Fixed slow operation message reporting for `INFO` entries
+- Aligned `README.md` and `Documentation.md` with current CLI behaviour and release workflow
+- Set `default-run = "frictiondetect"` in `Cargo.toml`
+
+### v0.1.0
 - Implemented friction analysis pipeline (errors, slow ops, gaps, repeats)  
 - Added example and documentation commands  
 - Introduced identity commands (`about`, `license`)  
 - Established consistent CLI output structure  
 - Finalised initial analysis and reporting pipeline  
-- Prepared repository for future refinement and public release  
-
+- Prepared repository for future refinement and public release
