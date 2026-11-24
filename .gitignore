@@ -1,14 +1,18 @@
 # Rust build output
 /target/
 
+# Local Cargo config (machine-specific target-dir)
+.cargo/
+
 # Cargo package files
 **/*.rs.bk
 
-# VS Code settings (optional, but keeps repo clean)
+# VS Code settings
 .vscode/
 
 # Logs or temporary files
 *.log
+!tests/fixtures/*.log
 
 # Generated code bundles
 *-code.txt
