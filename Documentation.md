@@ -2,38 +2,46 @@
 
 ## 1. Overview
 
-FrictionDetect analyses **structured JSONL logs** and identifies operational friction patterns such as:
+FrictionDetect analyses **structured JSONL logs** and identifies operational
+friction patterns such as:
 
 - errors and warnings  
 - slow operations  
 - long gaps between events  
 - repeated failures  
 
-It is intentionally strict, predictable, and designed to compose cleanly with tools like LogTidy.  
-FrictionDetect does **not** analyse unstructured logs or infer meaning from free text messages.  
-It relies entirely on explicit structured fields such as `timestamp`, `level`, and `duration_ms`.
+It is intentionally strict, predictable, and designed to work standalone on
+structured JSONL logs or compose cleanly with tools like LogTidy.  
+FrictionDetect does **not** analyse unstructured raw logs or infer meaning from
+free text messages.  
+It relies entirely on explicit structured fields such as `timestamp`, `level`,
+`message`, and `fields.duration_ms`.
 
-If these fields are missing or invalid, the corresponding friction categories cannot be detected.
+If these fields are missing or invalid, the corresponding friction categories
+cannot be detected.
 
 FrictionDetect provides one primary mode:
 
-- **Analyse**: read structured JSONL from file or stdin and emit a friction summary
+- **Analyse**: read structured JSONL from file or stdin and emit a friction
+  summary
 
 ---
 
 ## 2. Prerequisites
 
-Before installing FrictionDetect, there are a few requirements to ensure installation can run smoothly:
+Before installing FrictionDetect, ensure the following requirements are met:
 
 ### 2.1 A terminal
 FrictionDetect is a command‑line tool. You will need:
 
-- **Windows**: PowerShell or Command Prompt  
+- **Windows**: PowerShell or Command Prompt (including VS Code's integrated
+  terminal)  
 - **macOS**: Terminal  
 - **Linux**: Any shell (bash, zsh, etc.)
 
 ### 2.2 Understanding PATH
-Your **PATH** is the list of folders your system searches when you type a command.
+Your **PATH** is the list of folders your system searches when you type a
+command.
 
 If a program is inside a folder on your PATH, you can run it from any directory:
 
@@ -48,48 +56,53 @@ C:\Users\<you>\Downloads\frictiondetect.exe help
 ```
 
 ### 2.3 A folder on PATH
-You will need a folder where you can place the FrictionDetect binary.
+You will need a folder where you can place the FrictionDetect binaries
+(`frictiondetect` and `fd`).
 
 If you have Rust installed, the Cargo bin directory is already on PATH:
 
 - **Windows**: `C:\Users\<you>\.cargo\bin\`
 - **Linux/macOS**: `~/.cargo/bin/`
 
-Placing the binary here makes it available globally.
+Placing the binaries here makes them available globally.
 
-### 2.4 Rust and Cargo (optional)
-Rust is **not required** to run FrictionDetect, but it is useful if you want to:
+### 2.4 Rust and Cargo (optional on Windows; required for source builds)
+Rust is **not required** if you download a prebuilt binary from GitHub Releases,
+but it is required if you want to:
 
-- install via `cargo install frictiondetect`
-- build from source
+- build or install from source (`cargo build --release` or
+  `cargo install --path .`)
 - use the `.cargo/bin` directory (already on PATH)
 
 ---
 
 ## 3. Installation
 
-FrictionDetect can be installed in three ways: downloading a binary from GitHub Releases, installing from crates.io, or building from source using Cargo.
-
-All installation methods assume the prerequisites above have been met.
+FrictionDetect can currently be installed by downloading a prebuilt binary from
+**GitHub Releases** or building from source with **Cargo**. Publishing to
+`crates.io` (`cargo install frictiondetect`) is planned for a future release.
 
 ---
 
 ### 3.1 Install from GitHub Releases
 
-Download the latest binary from the Releases page:
+Download the latest release from:
 
 https://github.com/musman-uk/frictiondetect/releases
 
 **Note:**  
-Currently only **Windows binaries** are provided.  
-Linux and macOS users must install via crates.io or build from source.
+Currently only **Windows binaries** (`frictiondetect.exe` and `fd.exe`) are
+provided on GitHub Releases.  
+Linux and macOS users should build from source using Cargo (Section 3.2).
 
 ---
 
 ### 3.1.1 Windows
 
-1. Download `frictiondetect.exe` from the release.
-2. Move it into your Cargo bin directory:
+1. Download `frictiondetect.exe` (and optionally the `fd.exe` shorthand binary)
+   from the release.
+2. Move the binary into your Cargo bin directory (or another folder on your
+   PATH):
 
 ```
 C:\Users\<you>\.cargo\bin\
@@ -101,7 +114,8 @@ C:\Users\<you>\.cargo\bin\
 frictiondetect help
 ```
 
-If you prefer not to move it, you can run it directly from the download location:
+If you prefer not to move it, you can run it directly from the download
+location:
 
 ```
 .\frictiondetect.exe help
@@ -117,32 +131,41 @@ If you want to keep the binary somewhere else:
 4. Click **New** and add the folder containing `frictiondetect.exe`  
 5. Restart your terminal  
 
----
-
-### 3.2 Install from crates.io
-
-If you have Rust and Cargo installed:
-
-```
-cargo install frictiondetect
-```
-
-This compiles FrictionDetect from source and places the binary in `~/.cargo/bin`.
+**Note:**  
+Double-clicking the `.exe` file may briefly open and close a terminal window
+immediately. As prebuilt binaries are not digitally signed, your browser or
+Windows may show a prompt – choose **Keep** when downloading, and click
+**More info → Run anyway** if Windows prompts you when running it.
+Alternatively, you can build from source using Cargo (Section 3.2).
 
 ---
 
-### 3.3 Build from source with Cargo
+### 3.2 Build from source with Cargo
 
-Clone the repository and build a release binary:
+Clone the repository and build release binaries:
 
 ```
+git clone https://github.com/musman-uk/frictiondetect.git
+cd frictiondetect
 cargo build --release
 ```
 
-Then move the binary to a folder on your PATH:
+Copy both binaries (`frictiondetect` and `fd`) to a folder on your PATH:
+
+**Linux / macOS:**
+```
+cp target/release/frictiondetect target/release/fd ~/.cargo/bin/
+```
+
+**Windows (PowerShell):**
+```
+Copy-Item .\target\release\frictiondetect.exe, .\target\release\fd.exe $env:USERPROFILE\.cargo\bin\
+```
+
+Alternatively, install directly from the cloned directory with Cargo:
 
 ```
-cp target/release/frictiondetect ~/.cargo/bin/
+cargo install --path .
 ```
 
 Verify installation:
@@ -150,6 +173,14 @@ Verify installation:
 ```
 frictiondetect help
 ```
+
+---
+
+### 3.3 Installing via crates.io (Planned)
+
+Support for installing directly from `crates.io` (`cargo install frictiondetect`)
+is planned and not yet live. Until published, use GitHub Releases or build from
+source.
 
 ---
 
@@ -161,20 +192,31 @@ Analyse structured JSONL logs:
 cat logs.jsonl | frictiondetect analyse
 ```
 
+PowerShell:
+
+```
+Get-Content logs.jsonl | frictiondetect analyse
+```
+
+Piped directly from LogTidy:
+
+```
+Get-Content app.log | logtidy stream | frictiondetect analyse
+```
+
 This reads structured JSONL input and prints a friction report.
 
 ---
 
 ## 4. Commands
 
-| Command       | Description |
-|---------------|-------------|
-| `analyse`     | Analyse structured JSONL logs and produce a friction report |
-| `sample`      | Show example input and output |
-| `docs`        | Display condensed documentation |
-| `about`       | Show tool information |
-| `license`     | Display authorship and rights information |
-| `help`        | Show help for any command |
+| Command   | Description |
+|-----------|-------------|
+| `analyse` | Analyse structured JSONL logs and produce a friction report |
+| `sample`  | Show example input and output |
+| `docs`    | Display condensed documentation reference |
+| `about`   | Show tool name, version, license, source, and copyright notice |
+| `help`    | Show help for any command |
 
 ---
 
@@ -182,16 +224,22 @@ This reads structured JSONL input and prints a friction report.
 
 ### 5.1 Analyse Mode
 
-Analyse structured JSONL logs:
+Analyse structured JSONL logs from a file:
 
 ```
 frictiondetect analyse --file logs.jsonl
 ```
 
+Short flag and binary form:
+
+```
+fd analyse -f logs.jsonl
+```
+
 Or via stdin:
 
 ```
-cat logs.jsonl | frictiondetect analyse
+Get-Content logs.jsonl | frictiondetect analyse
 ```
 
 Analyse mode identifies:
@@ -215,8 +263,15 @@ Shows example input and output for reference.
 
 ### 5.3 Documentation and About
 
+Show condensed documentation:
+
 ```
 frictiondetect docs
+```
+
+Show tool information, version, and license:
+
+```
 frictiondetect about
 ```
 
@@ -225,16 +280,18 @@ frictiondetect about
 ## 6. Input Format
 
 FrictionDetect consumes **JSON Lines (JSONL)**.  
-Each line must be a **valid JSON object**.  
+Each non-empty line must be a **valid JSON object**.  
 A single malformed line aborts the entire run.
 
-Typical fields:
+Supported fields:
 
-- `timestamp`: RFC3339 timestamp  
-- `level`: `"INFO"`, `"WARN"`, `"ERROR"`  
-- `message`: log message  
-- `fields`: structured metadata  
-- `duration_ms`: optional numeric duration  
+- `line`: optional 1-based line number (defaults to the input line number if
+  omitted)  
+- `timestamp`: optional RFC3339 timestamp  
+- `level`: optional log level (`"ERROR"` and `"WARN"` are reported)  
+- `message`: optional log message  
+- `fields`: optional JSON object containing structured metadata (such as
+  numeric `duration_ms`)  
 
 Example:
 
@@ -251,9 +308,9 @@ Example:
 FrictionDetect applies strict, explicit rules.
 
 ### 7.1 JSON Parsing
-- Every non empty line must be valid JSON.  
+- Every non-empty line must be valid JSON.  
 - One malformed line aborts the entire analysis.  
-- Empty lines are skipped.
+- Empty or whitespace-only lines are skipped.
 
 ### 7.2 Level Detection
 - Only `"ERROR"` and `"WARN"` (uppercase) are recognised.  
@@ -267,11 +324,12 @@ FrictionDetect applies strict, explicit rules.
 
 ### 7.4 Long Gap Detection
 - Requires a valid RFC3339 timestamp.  
-- Gaps greater than 60 seconds are reported (hardcoded).  
+- Gaps greater than 60 seconds between consecutive timestamped entries are
+  reported (hardcoded).  
 - Invalid or missing timestamps disable gap detection for that entry.
 
 ### 7.5 Repeated Failure Detection
-- Messages are grouped by **exact string match**.  
+- Non-empty `message` values are grouped by **exact string match**.  
 - Case sensitive, whitespace sensitive, punctuation sensitive.  
 - Minimum occurrences: 2 (hardcoded).  
 - No fuzzy matching or normalisation.
@@ -286,7 +344,7 @@ FrictionDetect applies strict, explicit rules.
 
 ## 8. Known Limitations
 
-- Requires structured JSONL; raw logs are not supported  
+- Requires structured JSONL; raw unstructured logs are not supported  
 - One malformed JSON line aborts the run  
 - No streaming mode (entire file loaded into memory)  
 - Only uppercase `"ERROR"` and `"WARN"` are detected  
@@ -305,16 +363,17 @@ FrictionDetect applies strict, explicit rules.
 ### Command not found
 Ensure Cargo bin directory is on your PATH:
 
-```
-~/.cargo/bin
-```
+- **Windows**: `C:\Users\<you>\.cargo\bin\`
+- **Linux/macOS**: `~/.cargo/bin/`
+
+Restart your terminal after updating PATH.
 
 ### No friction detected
 Check that your logs include:
 
 - valid RFC3339 timestamps  
 - uppercase `"ERROR"` or `"WARN"`  
-- numeric `duration_ms` fields  
+- numeric `fields.duration_ms` values  
 
 ### JSON parse error
 A single malformed line will abort the run.  
@@ -324,4 +383,7 @@ Validate your JSONL input.
 
 ## 10. Summary
 
-FrictionDetect is a focused analysis tool for structured JSONL logs and highlights operational friction using explicit fields only, without inference or heuristics. Its behaviour is deterministic, minimal, and designed to integrate cleanly with real pipelines.
+FrictionDetect is a focused analysis tool for structured JSONL logs and
+highlights operational friction using explicit fields only, without inference or
+heuristics. Its behaviour is deterministic, minimal, and designed to integrate
+cleanly with real pipelines.
