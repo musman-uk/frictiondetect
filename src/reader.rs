@@ -6,6 +6,7 @@ use std::io::{self, BufRead};
 
 #[derive(Debug, Deserialize)]
 pub struct Entry {
+    #[serde(default)]
     pub line: usize,
     #[serde(default)]
     pub timestamp: Option<String>,
@@ -36,12 +37,15 @@ pub fn read_stdin() -> Result<Vec<Entry>, FrictionError> {
     let stdin = io::stdin();
     let mut entries = Vec::new();
 
-    for line in stdin.lock().lines() {
+    for (idx, line) in stdin.lock().lines().enumerate() {
         let line = line?;
         if line.trim().is_empty() {
             continue;
         }
-        let entry: Entry = serde_json::from_str(&line)?;
+        let mut entry: Entry = serde_json::from_str(&line)?;
+        if entry.line == 0 {
+            entry.line = idx + 1;
+        }
         entries.push(entry);
     }
 

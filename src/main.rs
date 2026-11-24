@@ -90,12 +90,15 @@ fn read_file(path: &PathBuf) -> Result<Vec<reader::Entry>, FrictionError> {
     let reader = BufReader::new(file);
 
     let mut entries = Vec::new();
-    for line in reader.lines() {
+    for (idx, line) in reader.lines().enumerate() {
         let line = line?;
         if line.trim().is_empty() {
             continue;
         }
-        let entry: reader::Entry = serde_json::from_str(&line)?;
+        let mut entry: reader::Entry = serde_json::from_str(&line)?;
+        if entry.line == 0 {
+            entry.line = idx + 1;
+        }
         entries.push(entry);
     }
 
