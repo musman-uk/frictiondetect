@@ -9,7 +9,6 @@
 - No implicit heuristics; all friction detection rules are explicit and intentional  
 
 ### Interaction Model
-- Commands follow a predictable pattern: heading → separator → content  
 - Primary mode (`analyse`) reflects the core purpose of the tool  
 - Documentation and examples remain concise and directly actionable  
 - Defaults avoid side effects and require no configuration to begin using the tool  
@@ -80,8 +79,10 @@
 ### v0.1.1 – Current
 - Relicensed under GNU General Public License v3.0 (`GPL-3.0-only`)
 - Consolidated tool metadata, license, and copyright notice into `about`
+- Removed the redundant `license` subcommand and streamlined default CLI output
 - Allowed standalone JSONL input without requiring an explicit `line` field
 - Fixed slow operation message reporting for `INFO` entries
+- Expanded integration test coverage
 - Aligned `README.md` and `Documentation.md` with current CLI behaviour and release workflow
 - Set `default-run = "frictiondetect"` in `Cargo.toml`
 
