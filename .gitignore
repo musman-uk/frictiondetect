@@ -14,15 +14,14 @@
 *.log
 !tests/fixtures/*.log
 
-# Generated code bundles
-*-code.txt
 
 # OS-specific noise
 .DS_Store
 Thumbs.db
 
-# Local Code Bundles and Changes
 code.txt
 *-code.txt
 apply-changes.mjs
 undo-changes.mjs
+.apply-backup/
+code-bundle.txt
