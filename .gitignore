@@ -19,6 +19,7 @@
 .DS_Store
 Thumbs.db
 
+# Local Code Bundles and Changes
 code.txt
 *-code.txt
 apply-changes.mjs
