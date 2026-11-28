@@ -1,8 +1,9 @@
 use crate::patterns::{FrictionSummary, LongGap, RepeatedFailureGroup};
 
+/// Formats the analysed friction summary into a deterministic, human-readable report.
 pub fn print(summary: &FrictionSummary) {
-    println!("FrictionDetect Report");
-    println!("=====================\n");
+    println!("FrictionPointer Report");
+    println!("======================\n");
 
     println!("Total:");
     println!("  Lines analysed: {}", summary.total_lines);

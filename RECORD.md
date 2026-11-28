@@ -47,7 +47,7 @@
 
 ### Versioning
 - Version sourced from `Cargo.toml` via `env!("CARGO_PKG_VERSION")`  
-- Current stage: **v0.1.1**  
+- Current stage: **v0.2.0**  
 - Versioning will stabilise once friction rules and thresholds mature  
 
 ---
@@ -76,7 +76,12 @@
 
 ## 4. Version History
 
-### v0.1.1 – Current
+### v0.2.0 – Current
+- Renamed package, repository, and primary binary from `frictiondetect` (`FrictionDetect`) to `frictionpointer` (`FrictionPointer`), replacing the `fd` shorthand binary with `fp`
+- Updated `default-run = "frictionpointer"`, error types (`FrictionPointerError`), report headers, CLI output, and integration tests to match the new name
+- Added architectural and invariant documentation comments across source modules without altering runtime behaviour
+
+### v0.1.1
 - Relicensed under GNU General Public License v3.0 (`GPL-3.0-only`)
 - Consolidated tool metadata, license, and copyright notice into `about`
 - Removed the redundant `license` subcommand and streamlined default CLI output

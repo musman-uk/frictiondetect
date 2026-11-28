@@ -15,7 +15,7 @@ fn report_contains_totals_and_details() {
 {"line":10,"timestamp":"2024-03-10T12:05:37Z","level":"ERROR","message":"Timeout while calling payment gateway"}
 "#;
 
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("analyse")
         .write_stdin(input)
@@ -24,7 +24,7 @@ fn report_contains_totals_and_details() {
 
     let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
 
-    assert!(stdout.contains("FrictionDetect Report"));
+    assert!(stdout.contains("FrictionPointer Report"));
     assert!(stdout.contains("Lines analysed: 10"));
     assert!(stdout.contains("Errors: 5"));
     assert!(stdout.contains("Warnings: 1"));
@@ -43,7 +43,7 @@ fn standalone_jsonl_without_line_numbers_defaults_to_one_based_index() {
         "\n",
     );
 
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("analyse")
         .write_stdin(input)
@@ -60,7 +60,7 @@ fn standalone_jsonl_without_line_numbers_defaults_to_one_based_index() {
 
 #[test]
 fn analyse_file_fixture_and_missing_file_error() {
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .args(["analyse", "--file", "tests/fixtures/sample1.jsonl"])
         .assert()
@@ -71,7 +71,7 @@ fn analyse_file_fixture_and_missing_file_error() {
     assert!(stdout.contains("Errors: 5"));
     assert!(stdout.contains("Long gaps: 1"));
 
-    Command::cargo_bin("frictiondetect")
+    Command::cargo_bin("frictionpointer")
         .unwrap()
         .args(["analyse", "--file", "tests/fixtures/does-not-exist.jsonl"])
         .assert()
@@ -80,7 +80,7 @@ fn analyse_file_fixture_and_missing_file_error() {
 
 #[test]
 fn empty_stdin_produces_zero_counts() {
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("analyse")
         .write_stdin("\n   \n")
@@ -96,7 +96,7 @@ fn empty_stdin_produces_zero_counts() {
 fn malformed_json_aborts_with_error() {
     let input = "{\"line\":1,\"level\":\"INFO\",\"message\":\"ok\"}\nnot valid json\n";
 
-    Command::cargo_bin("frictiondetect")
+    Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("analyse")
         .write_stdin(input)
@@ -106,28 +106,28 @@ fn malformed_json_aborts_with_error() {
 
 #[test]
 fn about_strips_escape_codes_when_piped() {
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("about")
         .assert()
         .success();
 
     let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
-    assert!(stdout.contains("FrictionDetect"));
+    assert!(stdout.contains("FrictionPointer"));
     assert!(stdout.contains("Mohammed Usman"));
     assert!(!stdout.contains("\x1b["));
     assert!(!stdout.contains("\x1b]8;;"));
 }
 
 #[test]
-fn fd_alias_and_invalid_subcommand() {
-    Command::cargo_bin("fd")
+fn fp_alias_and_invalid_subcommand() {
+    Command::cargo_bin("fp")
         .unwrap()
         .arg("--version")
         .assert()
         .success();
 
-    let assert = Command::cargo_bin("frictiondetect")
+    let assert = Command::cargo_bin("frictionpointer")
         .unwrap()
         .arg("not-a-command")
         .assert()

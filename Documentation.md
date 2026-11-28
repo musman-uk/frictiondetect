@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-FrictionDetect analyses **structured JSONL logs** and identifies operational
+FrictionPointer analyses **structured JSONL logs** and points out operational
 friction patterns such as:
 
 - errors and warnings  
@@ -11,8 +11,8 @@ friction patterns such as:
 - repeated failures  
 
 It is intentionally strict, predictable, and designed to work standalone on
-structured JSONL logs or compose cleanly with tools like LogTidy.  
-FrictionDetect does **not** analyse unstructured raw logs or infer meaning from
+structured JSONL logs or compose cleanly with tools like LogTidier.  
+FrictionPointer does **not** analyse unstructured raw logs or infer meaning from
 free text messages.  
 It relies entirely on explicit structured fields such as `timestamp`, `level`,
 `message`, and `fields.duration_ms`.
@@ -20,7 +20,7 @@ It relies entirely on explicit structured fields such as `timestamp`, `level`,
 If these fields are missing or invalid, the corresponding friction categories
 cannot be detected.
 
-FrictionDetect provides one primary mode:
+FrictionPointer provides one primary mode:
 
 - **Analyse**: read structured JSONL from file or stdin and emit a friction
   summary
@@ -29,10 +29,10 @@ FrictionDetect provides one primary mode:
 
 ## 2. Prerequisites
 
-Before installing FrictionDetect, ensure the following requirements are met:
+Before installing FrictionPointer, ensure the following requirements are met:
 
 ### 2.1 A terminal
-FrictionDetect is a command‑line tool. You will need:
+FrictionPointer is a command‑line tool. You will need:
 
 - **Windows**: PowerShell or Command Prompt (including VS Code's integrated
   terminal)  
@@ -46,18 +46,18 @@ command.
 If a program is inside a folder on your PATH, you can run it from any directory:
 
 ```
-frictiondetect help
+frictionpointer help
 ```
 
 If it is *not* on your PATH, you must run it using the full file path:
 
 ```
-C:\Users\<you>\Downloads\frictiondetect.exe help
+C:\Users\<you>\Downloads\frictionpointer.exe help
 ```
 
 ### 2.3 A folder on PATH
-You will need a folder where you can place the FrictionDetect binaries
-(`frictiondetect` and `fd`).
+You will need a folder where you can place the FrictionPointer binaries
+(`frictionpointer` and `fp`).
 
 If you have Rust installed, the Cargo bin directory is already on PATH:
 
@@ -78,9 +78,9 @@ but it is required if you want to:
 
 ## 3. Installation
 
-FrictionDetect can currently be installed by downloading a prebuilt binary from
+FrictionPointer can currently be installed by downloading a prebuilt binary from
 **GitHub Releases** or building from source with **Cargo**. Publishing to
-`crates.io` (`cargo install frictiondetect`) is planned for a future release.
+`crates.io` (`cargo install frictionpointer`) is planned for a future release.
 
 ---
 
@@ -88,10 +88,10 @@ FrictionDetect can currently be installed by downloading a prebuilt binary from
 
 Download the latest release from:
 
-https://github.com/musman-uk/frictiondetect/releases
+https://github.com/musman-uk/frictionpointer/releases
 
 **Note:**  
-Currently only **Windows binaries** (`frictiondetect.exe` and `fd.exe`) are
+Currently only **Windows binaries** (`frictionpointer.exe` and `fp.exe`) are
 provided on GitHub Releases.  
 Linux and macOS users should build from source using Cargo (Section 3.2).
 
@@ -99,7 +99,7 @@ Linux and macOS users should build from source using Cargo (Section 3.2).
 
 ### 3.1.1 Windows
 
-1. Download `frictiondetect.exe` (and optionally the `fd.exe` shorthand binary)
+1. Download `frictionpointer.exe` (and optionally the `fp.exe` shorthand binary)
    from the release.
 2. Move the binary into your Cargo bin directory (or another folder on your
    PATH):
@@ -111,14 +111,14 @@ C:\Users\<you>\.cargo\bin\
 3. Verify installation:
 
 ```
-frictiondetect help
+frictionpointer help
 ```
 
 If you prefer not to move it, you can run it directly from the download
 location:
 
 ```
-.\frictiondetect.exe help
+.\frictionpointer.exe help
 ```
 
 #### Adding a custom folder to PATH (optional)
@@ -128,7 +128,7 @@ If you want to keep the binary somewhere else:
 1. Open **Start Menu → Environment Variables**  
 2. Click **Environment Variables…**  
 3. Under **User variables**, select **Path** → **Edit**  
-4. Click **New** and add the folder containing `frictiondetect.exe`  
+4. Click **New** and add the folder containing `frictionpointer.exe`  
 5. Restart your terminal  
 
 **Note:**  
@@ -145,21 +145,21 @@ Alternatively, you can build from source using Cargo (Section 3.2).
 Clone the repository and build release binaries:
 
 ```
-git clone https://github.com/musman-uk/frictiondetect.git
-cd frictiondetect
+git clone [https://github.com/musman-uk/frictionpointer.git](https://github.com/musman-uk/frictionpointer.git)
+cd frictionpointer
 cargo build --release
 ```
 
-Copy both binaries (`frictiondetect` and `fd`) to a folder on your PATH:
+Copy both binaries (`frictionpointer` and `fp`) to a folder on your PATH:
 
 **Linux / macOS:**
 ```
-cp target/release/frictiondetect target/release/fd ~/.cargo/bin/
+cp target/release/frictionpointer target/release/fp ~/.cargo/bin/
 ```
 
 **Windows (PowerShell):**
 ```
-Copy-Item .\target\release\frictiondetect.exe, .\target\release\fd.exe $env:USERPROFILE\.cargo\bin\
+Copy-Item .\target\release\frictionpointer.exe, .\target\release\fp.exe $env:USERPROFILE\.cargo\bin\
 ```
 
 Alternatively, install directly from the cloned directory with Cargo:
@@ -171,14 +171,14 @@ cargo install --path .
 Verify installation:
 
 ```
-frictiondetect help
+frictionpointer help
 ```
 
 ---
 
 ### 3.3 Installing via crates.io (Planned)
 
-Support for installing directly from `crates.io` (`cargo install frictiondetect`)
+Support for installing directly from `crates.io` (`cargo install frictionpointer`)
 is planned and not yet live. Until published, use GitHub Releases or build from
 source.
 
@@ -189,19 +189,19 @@ source.
 Analyse structured JSONL logs:
 
 ```
-cat logs.jsonl | frictiondetect analyse
+cat logs.jsonl | frictionpointer analyse
 ```
 
 PowerShell:
 
 ```
-Get-Content logs.jsonl | frictiondetect analyse
+Get-Content logs.jsonl | frictionpointer analyse
 ```
 
-Piped directly from LogTidy:
+Piped directly from LogTidier:
 
 ```
-Get-Content app.log | logtidy stream | frictiondetect analyse
+Get-Content app.log | logtidier stream | frictionpointer analyse
 ```
 
 This reads structured JSONL input and prints a friction report.
@@ -227,19 +227,19 @@ This reads structured JSONL input and prints a friction report.
 Analyse structured JSONL logs from a file:
 
 ```
-frictiondetect analyse --file logs.jsonl
+frictionpointer analyse --file logs.jsonl
 ```
 
 Short flag and binary form:
 
 ```
-fd analyse -f logs.jsonl
+fp analyse -f logs.jsonl
 ```
 
 Or via stdin:
 
 ```
-Get-Content logs.jsonl | frictiondetect analyse
+Get-Content logs.jsonl | frictionpointer analyse
 ```
 
 Analyse mode identifies:
@@ -254,7 +254,7 @@ Analyse mode identifies:
 ### 5.2 Sample Output
 
 ```
-frictiondetect sample
+frictionpointer sample
 ```
 
 Shows example input and output for reference.
@@ -266,20 +266,20 @@ Shows example input and output for reference.
 Show condensed documentation:
 
 ```
-frictiondetect docs
+frictionpointer docs
 ```
 
 Show tool information, version, and license:
 
 ```
-frictiondetect about
+frictionpointer about
 ```
 
 ---
 
 ## 6. Input Format
 
-FrictionDetect consumes **JSON Lines (JSONL)**.  
+FrictionPointer consumes **JSON Lines (JSONL)**.  
 Each non-empty line must be a **valid JSON object**.  
 A single malformed line aborts the entire run.
 
@@ -305,7 +305,7 @@ Example:
 
 ## 7. Behaviour
 
-FrictionDetect applies strict, explicit rules.
+FrictionPointer applies strict, explicit rules.
 
 ### 7.1 JSON Parsing
 - Every non-empty line must be valid JSON.  
@@ -383,7 +383,7 @@ Validate your JSONL input.
 
 ## 10. Summary
 
-FrictionDetect is a focused analysis tool for structured JSONL logs and
-highlights operational friction using explicit fields only, without inference or
+FrictionPointer is a focused analysis tool for structured JSONL logs and
+points out operational friction using explicit fields only, without inference or
 heuristics. Its behaviour is deterministic, minimal, and designed to integrate
 cleanly with real pipelines.

@@ -1,6 +1,8 @@
 use crate::reader::Entry;
 use std::collections::HashMap;
 
+/// Tracks 1-based line numbers for each exact non-empty message string
+/// so repeated failures can be grouped without fuzzy matching or normalisation.
 #[derive(Debug, Default)]
 pub struct MessageCounts {
     counts: HashMap<String, Vec<usize>>,

@@ -1,12 +1,12 @@
 [package]
-name = "frictiondetect"
-version = "0.1.1"
+name = "frictionpointer"
+version = "0.2.0"
 edition = "2021"
 authors = ["Mohammed Usman"]
-description = "A CLI tool that identifies friction points in structured JSONL logs."
-repository = "https://github.com/musman-uk/frictiondetect"
+description = "A CLI tool that points out friction patterns in structured JSONL logs."
+repository = "https://github.com/musman-uk/frictionpointer"
 license = "GPL-3.0-only"
-default-run = "frictiondetect"
+default-run = "frictionpointer"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -18,10 +18,12 @@ clap = { version = "4", features = ["derive"] }
 [dev-dependencies]
 assert_cmd = "2"
 
+# Compile both the canonical binary and the `fp` shorthand from the same entry point
+# so users get both commands out of the box without manual PATH symlinks or shell aliases.
 [[bin]]
-name = "frictiondetect"
+name = "frictionpointer"
 path = "src/main.rs"
 
 [[bin]]
-name = "fd"
+name = "fp"
 path = "src/main.rs"

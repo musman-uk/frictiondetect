@@ -1,9 +1,13 @@
-use crate::errors::FrictionError;
+use crate::errors::FrictionPointerError;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
-use serde_json::{Map, Value};
+use serde_json::Value;
 use std::io::{self, BufRead};
 
+/// Represents a single structured JSONL log record.
+/// All fields use `#[serde(default)]` so standalone JSONL logs without an explicit
+/// `line` number or `fields` map still parse cleanly; missing `line` values default
+/// to `0` and are backfilled with the 1-based input line number during ingestion.
 #[derive(Debug, Deserialize)]
 pub struct Entry {
     #[serde(default)]
@@ -15,7 +19,7 @@ pub struct Entry {
     #[serde(default)]
     pub message: Option<String>,
     #[serde(default)]
-    pub fields: Option<Map<String, Value>>,
+    pub fields: Option<serde_json::Map<String, Value>>,
 }
 
 impl Entry {
@@ -33,10 +37,14 @@ impl Entry {
     }
 }
 
-pub fn read_stdin() -> Result<Vec<Entry>, FrictionError> {
+/// Reads structured JSONL entries from stdin into memory, aborting on the first
+/// malformed JSON line so partial or corrupt inputs never produce misleading reports.
+pub fn read_stdin() -> Result<Vec<Entry>, FrictionPointerError> {
     let stdin = io::stdin();
     let mut entries = Vec::new();
 
+    // Enumerate before skipping blank lines so fallback 1-based line numbers stay aligned
+    // with the original input stream.
     for (idx, line) in stdin.lock().lines().enumerate() {
         let line = line?;
         if line.trim().is_empty() {

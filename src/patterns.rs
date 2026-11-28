@@ -2,6 +2,7 @@ use crate::counters::MessageCounts;
 use crate::reader::Entry;
 use chrono::{DateTime, Utc};
 
+// Explicit, hardcoded thresholds keep friction detection deterministic across runs.
 const SLOW_THRESHOLD_MS: i64 = 500;
 const GAP_THRESHOLD_SECONDS: i64 = 60;
 const REPEATED_MIN_OCCURRENCES: usize = 2;
@@ -47,6 +48,8 @@ pub struct FrictionSummary {
     pub repeated_failures: Vec<RepeatedFailureGroup>,
 }
 
+/// Scans structured log entries in a single pass and groups explicit friction signals
+/// without inferring severity or meaning from unstructured text.
 pub fn analyse(entries: &[Entry]) -> FrictionSummary {
     let mut summary = FrictionSummary {
         total_lines: entries.len(),
@@ -57,7 +60,7 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
     let mut msg_counts = MessageCounts::default();
 
     for e in entries {
-        // Levels
+        // Only exact uppercase "ERROR" and "WARN" levels are classified.
         if let Some(level) = &e.level {
             let point = FrictionPoint {
                 line: e.line,
@@ -72,7 +75,7 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
             }
         }
 
-        // Slow operations
+        // Slow operations rely strictly on numeric `fields.duration_ms`.
         if let Some(ms) = e.duration_ms() {
             if ms > SLOW_THRESHOLD_MS {
                 summary.slow_ops.push(SlowOp {
@@ -84,7 +87,8 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
             }
         }
 
-        // Long gaps
+        // Only update `prev_ts` when a valid RFC3339 timestamp is present so
+        // untimestamped entries do not break gap tracking between surrounding events.
         if let Some(ts) = e.parsed_timestamp() {
             if let Some((prev, prev_line)) = prev_ts {
                 let gap = (ts - prev).num_seconds();
@@ -108,11 +112,11 @@ pub fn analyse(entries: &[Entry]) -> FrictionSummary {
             prev_ts = Some((ts, e.line));
         }
 
-        // Repeated messages
         msg_counts.add(e);
     }
 
-    // Build repeated failure groups
+    // Build repeated failure groups; `detail` is left empty on each occurrence because
+    // the shared message text is stored once at the group level.
     for (msg, lines) in msg_counts.repeated(REPEATED_MIN_OCCURRENCES) {
         let mut occurrences = Vec::new();
         for line in lines {
